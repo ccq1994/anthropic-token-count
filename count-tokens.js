@@ -23,19 +23,14 @@ const processFile = async () => {
             const pdfData = await parser.getText();
             data = pdfData.text;
         } else if (extension === '.docx') {
-            const result = await mammoth.extractRawText({ path: filename });
-            data = result.value;
+            data = (await mammoth.extractRawText({ path: filename })).value;
         } else if (extension === '.csv') {
-            const fileContent = fs.readFileSync(filename, 'utf8');
-            const result = Papa.parse(fileContent);
-            data = result.data.map(row => row.join(' ')).join('\n');
+            data = Papa.parse(fs.readFileSync(filename, 'utf8')).data.map(row => row.join(' ')).join('\n');
         } else if (extension === '.xlsx') {
             const workbook = XLSX.readFile(filename);
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
             data = XLSX.utils.sheet_to_csv(worksheet);
-        } else if (extension === '.md') {
-            data = fs.readFileSync(filename, 'utf8');
         } else {
             data = fs.readFileSync(filename, 'utf8');
         }
