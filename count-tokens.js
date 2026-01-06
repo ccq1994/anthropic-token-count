@@ -3,7 +3,7 @@ const { countTokens } = require('@anthropic-ai/tokenizer');
 const { PDFParse } = require('pdf-parse');
 const mammoth = require('mammoth');
 const Papa = require('papaparse');
-const XLSX = require('xlsx');
+const ExcelJS = require('exceljs');
 const path = require('path');
 
 if (process.argv.length < 3) {
@@ -27,10 +27,20 @@ const processFile = async () => {
         } else if (extension === '.csv') {
             data = Papa.parse(fs.readFileSync(filename, 'utf8')).data.map(row => row.join(' ')).join('\n');
         } else if (extension === '.xlsx') {
-            const workbook = XLSX.readFile(filename);
-            const sheetName = workbook.SheetNames[0];
-            const worksheet = workbook.Sheets[sheetName];
-            data = XLSX.utils.sheet_to_csv(worksheet);
+            const workbook = new ExcelJS.Workbook();
+            await workbook.xlsx.readFile(filename);
+            const worksheet = workbook.worksheets[0];
+
+            // Convert to CSV format
+            let csvData = '';
+            worksheet.eachRow((row, rowNumber) => {
+                const values = [];
+                row.eachCell({ includeEmpty: true }, (cell) => {
+                    values.push(cell.value || '');
+                });
+                csvData += values.join(',') + '\n';
+            });
+            data = csvData;
         } else {
             data = fs.readFileSync(filename, 'utf8');
         }
