@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Test files
+*.pdf
+*.docx
+*.xlsx
+*.csv
+*.txt
+*.md
+!README.md
+
+# OS files
+.DS_Store
+Thumbs.db
+.claude
