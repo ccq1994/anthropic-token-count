@@ -74,6 +74,10 @@ function getCellText(cell) {
     return String(value);
 }
 
+/**
+ * Process the input file and count tokens
+ * @returns {Promise<void>}
+ */
 const processFile = async () => {
     try {
         let data = '';
@@ -93,11 +97,6 @@ const processFile = async () => {
             // Process all worksheets (not just the first one)
             const allRows = [];
             workbook.worksheets.forEach((worksheet, index) => {
-                // Add sheet separator for multi-sheet workbooks
-                if (index > 0) {
-                    allRows.push([`--- Sheet: ${worksheet.name} ---`]);
-                }
-
                 // Convert each row to array of cell text values
                 worksheet.eachRow((row, rowNumber) => {
                     const values = [];
